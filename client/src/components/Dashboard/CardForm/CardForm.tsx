@@ -1,10 +1,8 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { FaRegCopy } from "react-icons/fa6"
 import { MdOutlineFileDownload } from "react-icons/md"
 import { IFormData } from "../../../interfaces/IFormData";
-import { getGFGStats } from "../../../services/HttpsService";
-import { extractJsonString, extractProblemStats, generateCardSvg} from "../../../services/Utils";
-import domtoimage from "dom-to-image";
+import {  generateCardSvg, loadGFGData, loadLeetCodeData} from "../../../services/Utils";
 
 function CardForm() {  
 
@@ -29,32 +27,6 @@ function CardForm() {
     SetFormData({...formData, [key]:value});
   }
 
-  const loadGFGData = async () => {
-    var response = await getGFGStats();
-    let problemNavbar = response('.problemNavbar_head__cKSRi');
-    const rawJsonString = response('div').next().text().trim();
-    const jsonData = extractJsonString(rawJsonString);
-
-    const pageProps = jsonData.props?.pageProps || {};
-    const userInfo = pageProps.userInfo || {};
-
-    const values:{[k:string]:number} = {
-        userHandle: pageProps.userHandle,
-        pod_solved_longest_streak: userInfo.pod_solved_longest_streak || 0,
-        pod_solved_global_longest_streak: userInfo.pod_solved_global_longest_streak || 0,
-        total_problems_solved: userInfo.total_problems_solved || 0,
-    };
-
-    values["ProgressBar"] = values.pod_solved_global_longest_streak
-            ? (100 * Math.PI * values.pod_solved_longest_streak) / values.pod_solved_global_longest_streak
-            : 0;
-
-    const problemStats = extractProblemStats(response(problemNavbar[0]).text());
-    Object.assign(values, problemStats);
-
-    return values;
-  }
-
   const handleSubmit =  async (e:Event) => {
     e.preventDefault();
     if(isValidData(formData))
@@ -62,22 +34,32 @@ function CardForm() {
         switch(formData.platform)
         {
             case "GeekForGeeks":
-                var stats = await loadGFGData();
+                var gfgStats = await loadGFGData();
                 switch(formData.action)
                 {
                     case "ProfileCard":
-                        debugger;
-                        var cardSvg = await generateCardSvg(stats, formData.theme);
+                        var cardSvg = await generateCardSvg(gfgStats, formData.theme);
                         setImage(cardSvg);
                         break;
                     case "RawData":
-                        console.log(stats);
+                        console.log(gfgStats);
                         break;
                     case "Markdown":
                         break;
                 }
                 break;
             case "LeetCode":
+                var leetCodeStats = await loadLeetCodeData();
+                console.log(leetCodeStats);
+                switch(formData.action)
+                {
+                    case "ProfileCard":
+                        break;
+                    case "RawData":
+                        break;
+                    case "Markdown":
+                        break;
+                }
                 break;
             case "CodeChef":
                 break;

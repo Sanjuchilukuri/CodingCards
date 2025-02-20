@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { getGFGStats, getLeetCodeStats } from "./HttpsService";
 
 export const extractProblemStats = (rawData:string) => {
     const problemDifficultyTag = ["School", "Basic", "Easy", "Medium", "Hard"];
@@ -30,72 +30,6 @@ export const extractJsonString = (rawString:string) => {
 
     return JSON.parse(jsonString.trim());    
 };
-
-// export const generateCard = (data: { [k: string]: number }, theme: string): HTMLElement => {
-//     const isDark = theme === "dark";
-//     const bgColor = isDark ? "#212529" : "#ffffff";
-//     const textColor = isDark ? "#f8f9fa" : "#000000";
-
-//     const reactElement = (
-//         <div
-//             className="card p-3 shadow-sm"
-//             style={{ backgroundColor: bgColor, color: textColor, width: "500px" }}
-//         >
-//             <div className="d-flex align-items-center mb-3">
-//                 <img
-//                     src="https://upload.wikimedia.org/wikipedia/commons/4/43/GeeksforGeeks.svg"
-//                     alt="GFG Logo"
-//                     width="50"
-//                 />
-//                 <h5 className="ms-3">
-//                     <a
-//                         href={`https://www.geeksforgeeks.org/user/${data.userHandle}/`}
-//                         target="_blank"
-//                         rel="noopener noreferrer"
-//                         style={{ color: textColor, textDecoration: "none" }}
-//                     >
-//                         {data.userHandle} | GFG Stats Card
-//                     </a>
-//                 </h5>
-//             </div>
-
-//             <div className="mb-3">
-//                 <strong>Streak:</strong> {data.pod_solved_longest_streak} / {data.pod_solved_global_longest_streak} days
-//             </div>
-
-//             <div className="mb-3">
-//                 <strong>Problems Solved:</strong>
-//                 <ul>
-//                     <li>School: {data.School}</li>
-//                     <li>Basic: {data.Basic}</li>
-//                     <li>Easy: {data.Easy}</li>
-//                     <li>Medium: {data.Medium}</li>
-//                     <li>Hard: {data.Hard}</li>
-//                 </ul>
-//             </div>
-
-//             <div>
-//                 <strong>Scores:</strong>
-//                 <ul>
-//                     <li>Coding Score: {data.total_score || "_ _"}</li>
-//                     <li>Problems Solved: {data.total_problems_solved || "_ _"}</li>
-//                     <li>
-//                         {data.current_rating ? "Contest Rating" : "Monthly Coding Score"}: {data.current_rating || data.monthly_score || "_ _"}
-//                     </li>
-//                 </ul>
-//             </div>
-//         </div>
-//     );
-
-//     debugger;
-//     const htmlString = ReactDOMServer.renderToString(reactElement);
-
-//     const template = document.createElement("template");
-//     template.innerHTML = htmlString.trim();
-
-
-//     return template.content.firstElementChild as HTMLElement;
-// };
 
 
 export const generateCardSvg = (data: any, theme: string) => {
@@ -171,52 +105,32 @@ export const generateCardSvg = (data: any, theme: string) => {
   )
 };
 
+export  const loadGFGData = async () => {
+    var response = await getGFGStats();
+    let problemNavbar = response('.problemNavbar_head__cKSRi');
+    const rawJsonString = response('div').next().text().trim();
+    const jsonData = extractJsonString(rawJsonString);
 
-// export const generateCard = (data: any, theme: string): HTMLDivElement => {
-//   const isDark = theme === "dark";
-//   const bgColor = isDark ? "#212529" : "#ffffff";
-//   const textColor = isDark ? "#f8f9fa" : "#000000";
+    const pageProps = jsonData.props?.pageProps || {};
+    const userInfo = pageProps.userInfo || {};
 
-//   const container = document.createElement("div");
-//   container.style.backgroundColor = bgColor;
-//   container.style.color = textColor;
-//   container.style.width = "500px";
-//   container.className = "card p-3 shadow-sm";
+    const values:{[k:string]:number} = {
+        userHandle: pageProps.userHandle,
+        pod_solved_longest_streak: userInfo.pod_solved_longest_streak || 0,
+        pod_solved_global_longest_streak: userInfo.pod_solved_global_longest_streak || 0,
+        total_problems_solved: userInfo.total_problems_solved || 0,
+    };
 
-//   container.innerHTML = `
-//     <div class="d-flex align-items-center mb-3">
-//       <img src="https://upload.wikimedia.org/wikipedia/commons/4/43/GeeksforGeeks.svg" alt="GFG Logo" width="50" />
-//       <h5 class="ms-3">
-//         <a href="https://www.geeksforgeeks.org/user/${data.userHandle || "unknown"}/" target="_blank" rel="noopener noreferrer" style="color: ${textColor}; text-decoration: none;">
-//           ${data.userHandle || "Unknown"} | GFG Stats Card
-//         </a>
-//       </h5>
-//     </div>
+    values["ProgressBar"] = values.pod_solved_global_longest_streak
+            ? (100 * Math.PI * values.pod_solved_longest_streak) / values.pod_solved_global_longest_streak
+            : 0;
 
-//     <div class="mb-3">
-//       <strong>Streak:</strong> ${data.pod_solved_longest_streak} / ${data.pod_solved_global_longest_streak} days
-//     </div>
+    const problemStats = extractProblemStats(response(problemNavbar[0]).text());
+    Object.assign(values, problemStats);
 
-//     <div class="mb-3">
-//       <strong>Problems Solved:</strong>
-//       <ul>
-//         <li>School: ${data.School || 0}</li>
-//         <li>Basic: ${data.Basic || 0}</li>
-//         <li>Easy: ${data.Easy || 0}</li>
-//         <li>Medium: ${data.Medium || 0}</li>
-//         <li>Hard: ${data.Hard || 0}</li>
-//       </ul>
-//     </div>
+    return values;
+}
 
-//     <div>
-//       <strong>Scores:</strong>
-//       <ul>
-//         <li>Coding Score: ${data.total_score || "_ _"}</li>
-//         <li>Problems Solved: ${data.total_problems_solved || "_ _"}</li>
-//         <li>${data.current_rating ? "Contest Rating" : "Monthly Coding Score"}: ${data.current_rating || data.monthly_score || "_ _"}</li>
-//       </ul>
-//     </div>
-//   `;
-
-//   return container;
-// };
+export const loadLeetCodeData = async () => {
+    return await getLeetCodeStats();
+}
