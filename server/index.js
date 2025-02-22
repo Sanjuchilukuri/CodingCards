@@ -2,8 +2,12 @@ const axios = require('axios');
 const express = require('express');
 const cors = require('cors');
 const cheerio = require('cheerio');
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+
 const { extractJsonString, extractProblemStats } = require('./helper');
 
+puppeteer.use(StealthPlugin());
 const app = express();
 app.use(cors());
 
@@ -16,6 +20,7 @@ app.get('/', (req, res) => {
             <li><code>/api/gfg-stats?userName="your_user_Name"</code> - Get GFG stats</li>
             <li><code>/api/leetcode-stats?userName="your_user_Name"</code> - Get Leetcode stats</li>
             <li><code>/api/codechef-stats?userName="your_user_Name"</code> - Get Codechef stats</li>
+            <li><code>/api/codeforces-stats?userName="your_user_Name"</code> - Get Codeforces stats</li>
         </ul>
     `);
 });
@@ -79,9 +84,87 @@ app.get('/api/codechef-stats', async(req,res) => {
     if( userName )
     { 
         let response = (await axios.get("https://www.codechef.com/users/sanju1819")).data;
-        res.send(response);
+        let $ = cheerio.load(response);
+
+        let profileImageUrl = $('.profileImage').attr("src");
+        
+        let rating = $(".user-details .rating").text().trim();
+        
+        let ratingContainer = $("aside .widget-rating .rating-header");
+        let currentrating = ratingContainer.find(".rating-number").text().trim();
+        let higestRatingText = ratingContainer.find("small").text().trim().split(" ");
+        let higestRating = higestRatingText[higestRatingText.length - 1].substring(0, higestRatingText[higestRatingText.length - 1].length-1);
+        
+        let participatedContests = $(".rating-graphs .rating-title-container b").text().trim();
+        
+        let totalSolvedProblemsText =  $(".rating-data-section").find("h3").last().text().trim().split(" ");
+        let totalSolvedProblems = totalSolvedProblemsText[totalSolvedProblemsText.length - 1];
+
+        let values = {
+            userName,
+            profileImageUrl,
+            stars: rating,
+            currentrating,
+            higestRating,
+            participatedContests,
+            totalSolvedProblems
+        }
+        return res.send(values);
     }
-    res.send("UserName required!!");
+    else{
+        res.send("UserName required!!");
+    }
+});
+
+app.get('/api/codeforces-stats', async(req,res) => {
+    let userName = req.query?.userName;
+    
+    if(userName)
+    {
+        const browser = await puppeteer.launch({headless:"new"});
+        const page = await browser.newPage();
+        
+        await page.goto(`https://codeforces.com/profile/${userName}`, { 
+            waitUntil:"domcontentloaded"
+        });
+
+        let pageContent = await page.content();
+        let $ = cheerio.load(pageContent);
+
+        let profileImageUrl = $('.title-photo img').attr("src");
+        let rank = $('.info .main-info .user-rank').text().trim();
+        let contextRatingContainer = $(".info ul");
+
+        let currentContextRating = contextRatingContainer.find("li").first().find("span").first().text();
+        
+        let highestContextRating = contextRatingContainer.find("li").first().find("span span").last().text();
+        
+        let totalSolvedProblems = $("._UserActivityFrame_counterValue").text().split(" ")[0];
+
+        await page.goto(`https://codeforces.com/contests/with/${userName}?type=all`,{
+            waitUntil:"domcontentloaded"
+        });
+
+        pageContent = await page.content();
+        $ = cheerio.load(pageContent);
+
+        let totalParticipatedContests = $(".user-contests-table tbody tr td").first().text();
+
+        await browser.close();
+
+        res.send({
+            profileImageUrl,
+            rank,
+            currentContextRating,
+            highestContextRating,
+            totalSolvedProblems,
+            totalParticipatedContests
+        });
+    }
+    else
+    {
+        res.send("userName required!");
+    }
 });
 
 app.listen(5000, console.log("started "))
