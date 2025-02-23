@@ -4,7 +4,6 @@ import { MdOutlineFileDownload } from "react-icons/md"
 import { IFormData } from "../../../interfaces/IFormData";
 import { get } from "../../../services/HttpsService";
 import { apiUrls } from "../../../constants/Constants";
-import { copyBlobToClipboard } from "copy-image-clipboard";
 
 function CardForm() {  
 
@@ -98,7 +97,6 @@ function CardForm() {
     console.log(document.hasFocus());
     const img = await fetch(image);
     const imgBlob = await img.blob();
-    debugger;
     navigator.clipboard.write([
         new ClipboardItem({'image/svg+xml':imgBlob})
     ]);
