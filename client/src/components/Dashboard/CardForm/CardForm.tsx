@@ -95,7 +95,6 @@ function CardForm() {
                             <option value="LeetCode">LeetCode</option>
                             <option value="CodeChef">CodeChef</option>
                             <option value="CodeForces">CodeForces</option>
-                            <option value="HackerRank">HackerRank</option>
                         </select>
                     </div>
 

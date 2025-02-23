@@ -5,7 +5,7 @@ const cheerio = require('cheerio');
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 
-const { extractJsonString, extractProblemStats } = require('./helper');
+const { extractJsonString, extractProblemStats, generateGFGSvg, generateLeetcodeSvg } = require('./helper');
 
 puppeteer.use(StealthPlugin());
 const app = express();
@@ -26,7 +26,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/gfg-stats', async (req,res) => {
-    let userName = req.query.userName;
+    let userName = req.query?.userName;
+    let action = req.query?.action || 'rawData';
+    let theme = req.query?.theme || 'dark';
     if( userName )
     {
         let response = (await axios.get(`https://www.geeksforgeeks.org/user/${userName}/`));
@@ -50,33 +52,126 @@ app.get('/api/gfg-stats', async (req,res) => {
             current_rating: pageProps.contestData?.current_rating || 0
         };
 
-        // Extract problem difficulty stats
         const problemStats = extractProblemStats(response(problemNavbar[0]).text());
         Object.assign(values, problemStats);
 
         values["ProgressBar"] = values.pod_solved_global_longest_streak
                 ? (100 * Math.PI * values.pod_solved_longest_streak) / values.pod_solved_global_longest_streak
                 : 0;
-        return res.send(values);
+        
+        response = (await axios.get("https://practiceapi.geeksforgeeks.org/api/vr/problems/?pageMode=explore&page=1&difficulty=-1")).data;
+        values["basicProblemsTotal"] = response["total"];
+        values["basicProblemsProgress"] = (values["Basic"]/response["total"])*100;
+
+        response = (await axios.get("https://practiceapi.geeksforgeeks.org/api/vr/problems/?pageMode=explore&page=1&difficulty=0")).data;
+        values["easyProblemsTotal"] = response["total"];
+        values["easyProblemsProgress"] = (values["Easy"]/response["total"])*100;
+
+        response = (await axios.get("https://practiceapi.geeksforgeeks.org/api/vr/problems/?pageMode=explore&page=1&difficulty=1")).data;
+        values["mediumProblemsTotal"] = response["total"];
+        values["mediumProblemsProgress"] = (values["Medium"]/response["total"])*100;
+
+        response = (await axios.get("https://practiceapi.geeksforgeeks.org/api/vr/problems/?pageMode=explore&page=1&difficulty=2")).data;
+        values["hardProblemsTotal"] = response["total"];
+        values["hardProblemsProgress"] = (values["Hard"]/response["total"])*100;
+
+        
+        if( action == "profileCard" )
+        {
+            let svg = await generateGFGSvg(values,theme);
+            res.setHeader("Content-Type", "image/svg+xml");
+            res.send(svg);
+        }
+        else if( action == "rawData" )
+        {
+            res.send(values);
+        }
     }
-    res.send("UserName required!!");
+    else
+    {
+        res.send("UserName required!!");
+    }
 });
 
 app.get('/api/leetcode-stats', async(req,res) => {
     let userName = req.query.userName;
+    let action = req.query?.action;
+    let theme = req.query?.theme || 'dark';
 
     if(userName)
     {   
-        const response = await axios.get("https://leetcode.com/graphql/", {
+        const response = (await axios.get("https://leetcode.com/graphql/", {
             data:{
                 operationName: "userProfileUserQuestionProgressV2",
                 query: "\n    query userProfileUserQuestionProgressV2($userSlug: String!) {\n  userProfileUserQuestionProgressV2(userSlug: $userSlug) {\n    numAcceptedQuestions {\n      count\n      difficulty\n    }\n    numFailedQuestions {\n      count\n      difficulty\n    }\n    numUntouchedQuestions {\n      count\n      difficulty\n    }\n    userSessionBeatsPercentage {\n      difficulty\n      percentage\n    }\n    totalQuestionBeatsPercentage\n  }\n}\n    ",
-                variables: {userSlug: "sanju1819"}
+                variables: {userSlug: userName}
+            }
+        })).data;
+
+        const progress = response.data.userProfileUserQuestionProgressV2;
+
+        let totalSolvedProblems = 0;
+        let totalProblems = 0;
+        let totalEasySolvedProblems = 0, totalMediumSolvedProblems = 0, totalHardSolvedProblems = 0;
+        let totalEasyProblems = 0, totalMediumProblems = 0, totalHardProblems = 0;
+
+        const difficulties = ["EASY", "MEDIUM", "HARD"];
+
+        difficulties.forEach(difficulty => {
+            let solved = progress.numAcceptedQuestions.find(q => q.difficulty === difficulty)?.count || 0;
+            let failed = progress.numFailedQuestions.find(q => q.difficulty === difficulty)?.count || 0;
+            let untouched = progress.numUntouchedQuestions.find(q => q.difficulty === difficulty)?.count || 0;
+            
+            let total = solved + failed + untouched;
+            
+            totalSolvedProblems += solved;
+            totalProblems += total;
+
+            if (difficulty === "EASY") {
+                totalEasySolvedProblems = solved;
+                totalEasyProblems = total;
+            } else if (difficulty === "MEDIUM") {
+                totalMediumSolvedProblems = solved;
+                totalMediumProblems = total;
+            } else if (difficulty === "HARD") {
+                totalHardSolvedProblems = solved;
+                totalHardProblems = total;
             }
         });
-        return res.send(response.data);
+
+        
+
+        const values = {
+            totalProblems,
+            totalSolvedProblems,
+            totalEasyProblems,
+            totalEasySolvedProblems,
+            totalMediumProblems,
+            totalMediumSolvedProblems,
+            totalHardProblems,
+            totalHardSolvedProblems,
+            userName
+        }
+
+        values["ProgressBar"] = values.totalSolvedProblems
+        ? (100 * Math.PI * values.totalSolvedProblems) / values.totalProblems
+        : 0;
+
+        if( action == "profileCard" )
+        {
+            let svg = await generateLeetcodeSvg(values, theme);
+            res.setHeader("Content-Type", "image/svg+xml");
+            res.send(svg);
+        }
+        else if( action == "rawData" )
+        {
+            return res.send(values);
+        }
     }
-    res.send("UserName required!!");
+    else
+    {
+        res.send("UserName required!!");
+    }
 });
 
 app.get('/api/codechef-stats', async(req,res) => {
