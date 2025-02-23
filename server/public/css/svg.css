@@ -47,6 +47,10 @@
     transform: translate(30px, 90px)
 }
 
+#total-streak-leetcode {
+    transform: translate(30px, 65px)
+}
+
 #total-streak-bg {
     cx: 40px;
     cy: 40px;
@@ -54,6 +58,15 @@
     stroke: var(--bg-4);
     stroke-width: 7px;
 }
+
+#total-streak-bg-leetcode {
+    cx: 40px;
+    cy: 40px;
+    r: 40px;
+    stroke: var(--bg-4);
+    stroke-width: 7px;
+}
+
 
 #total-streak-ring {
     cx: 40px;
@@ -64,6 +77,19 @@
 
     stroke-dasharray: var(--progress-dasharray) 1000;
     stroke: var(--color-4);
+    stroke-width: 7px;
+    stroke-linecap: round;
+}
+
+#total-streak-ring-leetcode {
+    cx: 40px;
+    cy: 40px;
+    r: 40px;
+    transform: rotate(-90deg);
+    transform-origin: 40px 40px;
+
+    stroke-dasharray: var(--progress-dasharray) 1000;
+    stroke: #ffa116;
     stroke-width: 7px;
     stroke-linecap: round;
 }
@@ -100,6 +126,11 @@
 #solved {
     transform: translate(160px, 60px)
 }
+
+#solved-leetcode {
+    transform: translate(160px, 20px)
+}
+
 
 #school-solved {
     transform: translate(0, 0px)
@@ -194,6 +225,11 @@
 #total-activity {
     transform: translate(0px, 205px)
 }
+
+#total-activity-leetcode {
+    transform: translate(0px, 170px)
+}
+
 
 #_1b {
     stroke: var(--bg-1);

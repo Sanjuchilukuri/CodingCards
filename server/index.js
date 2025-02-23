@@ -100,7 +100,7 @@ app.get('/api/leetcode-stats', async(req,res) => {
 
     if(userName)
     {   
-        const response = (await axios.get("https://leetcode.com/graphql/", {
+        let response = (await axios.get("https://leetcode.com/graphql/", {
             data:{
                 operationName: "userProfileUserQuestionProgressV2",
                 query: "\n    query userProfileUserQuestionProgressV2($userSlug: String!) {\n  userProfileUserQuestionProgressV2(userSlug: $userSlug) {\n    numAcceptedQuestions {\n      count\n      difficulty\n    }\n    numFailedQuestions {\n      count\n      difficulty\n    }\n    numUntouchedQuestions {\n      count\n      difficulty\n    }\n    userSessionBeatsPercentage {\n      difficulty\n      percentage\n    }\n    totalQuestionBeatsPercentage\n  }\n}\n    ",
@@ -139,7 +139,15 @@ app.get('/api/leetcode-stats', async(req,res) => {
             }
         });
 
-        
+        response = (await axios.get("https://leetcode.com/graphql/", {
+            data:{
+                    operationName: "userContestRankingInfo",
+                    query: "query userContestRankingInfo($username: String!) { userContestRanking(username: $username) { attendedContestsCount rating globalRanking totalParticipants topPercentage } }",
+                    variables: {
+                        "username": userName
+                    }
+                }}
+        )).data;
 
         const values = {
             totalProblems,
@@ -156,6 +164,20 @@ app.get('/api/leetcode-stats', async(req,res) => {
         values["ProgressBar"] = values.totalSolvedProblems
         ? (100 * Math.PI * values.totalSolvedProblems) / values.totalProblems
         : 0;
+
+        const contestRanking = response.data.userContestRanking;
+        values["attendedContestsCount"] = contestRanking.attendedContestsCount;
+        values["contestRating"] = Math.floor(contestRanking.rating);
+
+        response = (await axios.get("https://leetcode.com/graphql/",{
+            data:{
+                operationName: "userBadges",
+                query : "query userBadges($username: String!) {matchedUser(username: $username) {badges {id\n      name\n      shortName\n      displayName\n      }}}",
+                variables : {username: userName}
+            }
+        })).data;
+
+        values["badgesCount"] = response.data.matchedUser.badges.length;
 
         if( action == "profileCard" )
         {
