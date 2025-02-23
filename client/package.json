@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^1.7.9",
     "cheerio": "^1.0.0",
+    "copy-image-clipboard": "^2.1.2",
     "dom-to-image": "^2.6.0",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
