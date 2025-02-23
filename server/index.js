@@ -10,7 +10,7 @@ const { extractJsonString, extractProblemStats, generateGFGSvg, generateLeetcode
 puppeteer.use(StealthPlugin());
 const app = express();
 app.use(cors({
-    origin:"*"
+    origin:true
 }));
 
 
