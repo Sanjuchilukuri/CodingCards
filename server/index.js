@@ -17,8 +17,8 @@ app.get('/', (req, res) => {
         <h1>Welcome to the CodingCards Backend!</h1>
         <p>Available Endpoints:</p>
         <ul>
-            <li><code>/api/gfg-stats?userName="your_user_Name"</code> - Get GFG stats</li>
-            <li><code>/api/leetcode-stats?userName="your_user_Name"</code> - Get Leetcode stats</li>
+            <li><code>/api/gfg-stats?userName="your_user_Name"&action="ProfileCard/rawData"&theme="light/dark"</code> - Get GFG stats</li>
+            <li><code>/api/leetcode-stats?userName="your_user_Name"&action="ProfileCard/rawData"&theme="light/dark"</code> - Get Leetcode stats</li>
             <li><code>/api/codechef-stats?userName="your_user_Name"</code> - Get Codechef stats</li>
             <li><code>/api/codeforces-stats?userName="your_user_Name"</code> - Get Codeforces stats</li>
         </ul>
