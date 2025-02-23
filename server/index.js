@@ -9,7 +9,9 @@ const { extractJsonString, extractProblemStats, generateGFGSvg, generateLeetcode
 
 puppeteer.use(StealthPlugin());
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin:"*"
+}));
 
 
 app.get('/', (req, res) => {
