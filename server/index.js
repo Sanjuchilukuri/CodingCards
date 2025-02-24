@@ -41,7 +41,7 @@ app.get('/api/gfg-stats', async (req, res) => {
         response = (await axios.get(`https://www.geeksforgeeks.org/user/${userName}/`));
     }
     catch (error) {
-        return res.status(404).json({ error: "User not found or GFG is down!" });
+        return res.status(500).json({ error: "Failed to fetch userData!" });
     }
 
     response = cheerio.load(response?.data);
