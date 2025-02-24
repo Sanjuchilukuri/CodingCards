@@ -18,7 +18,7 @@ function CardForm() {
   const [image, setImage] = useState("");
   const [rawData,setRawData] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [markdownText, setMarkdownText] = useState("");
 
   const handleInputChange = (key: keyof IFormData, e:Event) => {    
     let value ;
@@ -31,131 +31,98 @@ function CardForm() {
     }
     SetFormData({...formData, [key]:value});
   }
+  
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault();
+    SetLoading(true);
+    setErrorMessage(""); // Reset error state
 
-//   const handleSubmit =  async (e:Event) => {
-//     e.preventDefault();
-//     SetLoading(true);
-//     if(isValidData(formData))
-//     {
-//         try
-//         {
-//               switch(formData.platform)
-//                 {
-//                     case "GeekForGeeks":
-//                         switch(formData.action)
-//                         {
-//                             case "profileCard":
-//                                 let response = await get(apiUrls.GFG, { action: formData.action, theme: formData.theme, userName: formData.userName });
-//                                 const blob = new Blob([response], {type: 'image/svg+xml'});
-//                                 const url = URL.createObjectURL(blob);
-//                                 setRawData("");
-//                                 setImage(url);
-//                                 break;
-//                             case "rawData":
-//                                 let responseRawData = await get(apiUrls.GFG, { action: formData.action, theme: formData.theme, userName: formData.userName });
-//                                 setImage("");
-//                                 setRawData(JSON.stringify(responseRawData, null, 4));
-//                                 break;
-//                             case "Markdown":
-//                                 break;
-//                         }
-//                         break;
-//                     case "LeetCode":
-//                         switch(formData.action)
-//                         {
-//                             case "profileCard":
-//                                 let response = await get(apiUrls.LeetCode, { action: formData.action, theme: formData.theme, userName: formData.userName });
-//                                 const blob = new Blob([response], {type: 'image/svg+xml'});
-//                                 const url = URL.createObjectURL(blob);
-//                                 setRawData("");
-//                                 setImage(url);
-//                                 break;
-//                             case "rawData":
-//                                 let responseRawData = await get(apiUrls.LeetCode, { action: formData.action, theme: formData.theme, userName: formData.userName });
-//                                 setImage("");
-//                                 setRawData(JSON.stringify(responseRawData, null, 4));  
-//                                 break;
-//                             case "Markdown":
-//                                 break;
-//                         }
-//                         break;  
-//                 }
-//         }
-//         catch(error)
-//         {
-
-//         }
-//     }
-//     SetLoading(false);       
-//   }
-
-
-    const handleSubmit = async (e: Event) => {
-        e.preventDefault();
-        SetLoading(true);
-        setErrorMessage(""); // Reset error state
-
-        if (!formData.platform || !formData.userName) {
-            setErrorMessage("Platform and username are required.");
-            SetLoading(false);
-            return;
-        }
-
-        try {
-            let response;
-            switch (formData.platform) {
-                case "GeekForGeeks":
-                    response = await get(apiUrls.GFG, {
-                        action: formData.action,
-                        theme: formData.theme,
-                        userName: formData.userName,
-                    });
-                    break;
-                case "LeetCode":
-                    response = await get(apiUrls.LeetCode, {
-                        action: formData.action,
-                        theme: formData.theme,
-                        userName: formData.userName,
-                    });
-                    break;
-                default:
-                    setErrorMessage("Invalid platform selected.");
-                    SetLoading(false);
-                    return;
-            }
-
-            if (formData.action === "profileCard") {
-                const blob = new Blob([response], { type: "image/svg+xml" });
-                setImage(URL.createObjectURL(blob));
-                setRawData("");
-            } else if (formData.action === "rawData") {
-                setRawData(JSON.stringify(response, null, 4));
-                setImage("");
-            }
-
-        } catch (error) {
-            console.error("API Error:", error);
-            setErrorMessage("Failed to fetch data. Please try again.");
-        } finally {
-            SetLoading(false);
-        }
-    };
-
-  async function copyImg() {
-    const permission = await navigator.permissions.query({ name: "clipboard-write" as PermissionName });
-
-    if (permission.state === "denied") {
-        alert("Clipboard access is denied. Please allow clipboard permissions.");
+    if (!formData.platform || !formData.userName) {
+        setErrorMessage("Platform and username are required.");
+        SetLoading(false);
         return;
     }
 
-    console.log(document.hasFocus());
-    const img = await fetch(image);
-    const imgBlob = await img.blob();
-    navigator.clipboard.write([
-        new ClipboardItem({'image/svg+xml':imgBlob})
+    try {
+        let response;
+        switch (formData.platform) {
+            case "GeekForGeeks":
+                response = await get(apiUrls.GFG, {
+                    action: formData.action,
+                    theme: formData.theme,
+                    userName: formData.userName,
+                });
+                break;
+            case "LeetCode":
+                response = await get(apiUrls.LeetCode, {
+                    action: formData.action,
+                    theme: formData.theme,
+                    userName: formData.userName,
+                });
+                break;
+            default:
+                setErrorMessage("Invalid platform selected.");
+                SetLoading(false);
+                return;
+        }
+
+        if (formData.action === "profileCard") {
+            const blob = new Blob([response], { type: "image/svg+xml" });
+            setImage(URL.createObjectURL(blob));
+            setRawData("");
+            setMarkdownText("");
+        } else if (formData.action === "rawData") {
+            setRawData(JSON.stringify(response, null, 4));
+            setImage("");
+            setMarkdownText("");
+        } else if( formData.action == "Markdown" ) {
+            let apicall = "";
+            if( formData.platform == "GeekForGeeks" )
+            {
+                apicall = 'gfg-stats';
+            }
+            else if( formData.platform == "LeetCode" )
+            {
+                apicall = 'leetcode-stats';
+            }
+            setMarkdownText(`[![stats](https://coding-cards.vercel.app/api/${apicall}?action=${formData.action}&theme=${formData.theme}&userName=${formData.userName})]`)
+            setRawData("");
+            setImage("");
+        }
+
+
+    } catch (error) {
+        console.error("API Error:", error);
+        setErrorMessage("Failed to fetch data. Please try again.");
+    } finally {
+        SetLoading(false);
+    }
+  };
+  
+  async function copyImg(data: any, format: string) {
+    console.log(data, format);
+    let mimeType = 'text/plain';
+
+    if (format === "rawData") {
+        mimeType = 'text/plain';
+    } else if (format === "Markdown") {
+        mimeType = 'text/plain';
+    }
+
+    await navigator.clipboard.write([
+        new ClipboardItem({
+            [mimeType]: new Blob([data], { type: mimeType })
+        })
     ]);
   }
+
+  const downloadSvg = () => {
+    const a = document.createElement("a");
+    a.href = image;
+    a.download = "image.svg";
+    a.click();
+  }
+
 
   
   return (
@@ -204,21 +171,36 @@ function CardForm() {
                         <div className='w-100 d-flex gap-2 align-items-end '>
                             <img src={image} style={{width:"370px"}}/>
                             <div className='d-flex flex-column gap-3 justify-content-end pb-2'>
-                                <span title="download" className='click-action'>
+                                <span title="download" className='click-action' onClick={downloadSvg}>
                                     <MdOutlineFileDownload className='fs-4 cursor-pointer text-blue'/>
-                                </span>
-                                <span title='Copy' className='click-action' onClick={copyImg}>
-                                    <FaRegCopy className='fs-5 cursor-pointer text-blue' />
                                 </span>
                             </div>
                         </div>
                     }
                     { rawData &&
-                        <pre style={{height:"200px", overflow:"scroll", backgroundColor:"#f5f5ff"}} className="border">
-                            {rawData}
-                        </pre>
+                        <div className="d-flex gap-2">
+                            <pre style={{height:"200px", overflow:"scroll", backgroundColor:"#f5f5ff"}} className="border">
+                                {rawData}
+                            </pre>
+                            <div className='d-flex flex-column gap-3 justify-content-end pb-2'>
+                                <span title='Copy' className='click-action' onClick={() => copyImg(rawData, "rawData")}>
+                                    <FaRegCopy className='fs-5 cursor-pointer text-blue' />
+                                </span>
+                            </div>
+                        </div>
                     }
-
+                    { markdownText &&
+                        <div className="d-flex gap-2">
+                            <pre style={{height:"50px", overflow:"scroll", backgroundColor:"#f5f5ff"}} className="border">
+                                {markdownText}
+                            </pre>
+                             <div className='d-flex flex-column gap-3 justify-content-end pb-2'>
+                                <span title='Copy' className='click-action' onClick={() => copyImg(markdownText, "Markdown")}>
+                                    <FaRegCopy className='fs-5 cursor-pointer text-blue' />
+                                </span>
+                            </div>
+                        </div>
+                    }
                     <button 
                         className="bg-blue text-white fw-bold rounded-2 border-0 outline-0 py-2 cursor-pointer"
                         onClick={(e:any) => handleSubmit(e)}
