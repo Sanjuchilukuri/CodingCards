@@ -178,8 +178,8 @@ function CardForm() {
                         </div>
                     }
                     { rawData &&
-                        <div className="d-flex gap-2">
-                            <pre style={{height:"200px", overflow:"scroll", backgroundColor:"#f5f5ff"}} className="border">
+                        <div className="d-flex gap-2 w-100">
+                            <pre style={{height:"200px", overflow:"scroll", backgroundColor:"#f5f5ff", width:"90%"}} className="border ">
                                 {rawData}
                             </pre>
                             <div className='d-flex flex-column gap-3 justify-content-end pb-2'>
@@ -191,7 +191,7 @@ function CardForm() {
                     }
                     { markdownText &&
                         <div className="d-flex gap-2">
-                            <pre style={{height:"50px", overflow:"scroll", backgroundColor:"#f5f5ff"}} className="border">
+                            <pre style={{height:"50px", overflow:"scroll", backgroundColor:"#f5f5ff", width:"90%"}} className="border ">
                                 {markdownText}
                             </pre>
                              <div className='d-flex flex-column gap-3 justify-content-end pb-2'>
