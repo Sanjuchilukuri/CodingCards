@@ -30,7 +30,7 @@ const extractProblemStats = (rawData) => {
             const tempStart = i + 1;
             while (rawData[i] !== ')') i++;
             const tempProblems = parseInt(rawData.substring(tempStart, i)) || 0;
-            values[problemDifficultyTag[tagIndex++]] = tempProblems;
+            values[problemDifficultyTag[tagIndex++]] = tempProblems || 0;
         }
     }
 
@@ -82,7 +82,7 @@ const generateLeetcodeSvg = async (data, theme='dark') => {
             <text id="username-text">${data.userName}</text>    
         </a>
 
-        <a href="https://leetcode.com/u/${data.userName}/" target="_blank">
+        <a href="https://www.codingcards.sanjuchilukuri.me/" target="_blank">
             <g transform="translate(350, 37)">
                 <text font-size="24" font-weight="bold" fill="#1090cb">
                     Coding <tspan id="username-text">Cards</tspan>
@@ -95,19 +95,19 @@ const generateLeetcodeSvg = async (data, theme='dark') => {
             <circle id="total-streak-bg-leetcode" />
             <circle id="total-streak-ring-leetcode" />
             <text id="total-streak-text">
-                ${data.totalSolvedProblems}
+                ${data.totalSolvedProblems || 0}
             </text>
         </g>
 
         <g id="solved-leetcode">
             <g id="easy-solved"><text id="easy-solved-type">Easy</text>
-                <text id="easy-solved-count">${data.totalEasySolvedProblems} / ${data.totalEasyProblems}</text>
+                <text id="easy-solved-count">${data.totalEasySolvedProblems || 0} / ${data.totalEasyProblems}</text>
             </g>
             <g id="medium-solved"><text id="medium-solved-type">Medium</text>
-                <text id="medium-solved-count">${data.totalMediumProblems} / ${data.totalMediumSolvedProblems}</text>
+                <text id="medium-solved-count">${data.totalMediumProblems || 0} / ${data.totalMediumSolvedProblems}</text>
             </g>
             <g id="hard-solved"><text id="hard-solved-type">Hard
-                </text><text id="hard-solved-count">${data.totalHardProblems} / ${data.totalHardSolvedProblems}</text>
+                </text><text id="hard-solved-count">${data.totalHardProblems || 0} / ${data.totalHardSolvedProblems}</text>
             </g>
         </g>
         <g id="total-activity-leetcode">
@@ -172,7 +172,7 @@ const generateGFGSvg = async (data, theme = 'dark') => {
             <text id="username-text">${data.userHandle}</text>    
         </a>
 
-        <a href="https://www.geeksforgeeks.org/user/${data.userHandle}/" target="_blank">
+        <a href="https://www.codingcards.sanjuchilukuri.me/" target="_blank">
             <g transform="translate(350, 37)">
                 <text font-size="24" font-weight="bold" fill="#1090cb">
                     Coding <tspan id="username-text">Cards</tspan>
@@ -186,7 +186,7 @@ const generateGFGSvg = async (data, theme = 'dark') => {
             <circle id="total-streak-bg" />
             <circle id="total-streak-ring" />
             <text id="total-streak-text">
-                ${data.pod_solved_longest_streak}/${data.pod_solved_global_longest_streak}
+                ${data.pod_solved_longest_streak || 0}/${data.pod_solved_global_longest_streak}
             </text>
             <text id="streak-text">STREAK</text>
             <text id="days-text">days</text>
@@ -195,16 +195,16 @@ const generateGFGSvg = async (data, theme = 'dark') => {
         <g id="solved">
             <g id="basic-solved">
                 <text id="basic-solved-type">Basic</text>
-                <text id="basic-solved-count">${data.Basic} / ${data.basicProblemsTotal}</text>
+                <text id="basic-solved-count">${data.Basic || 0} / ${data.basicProblemsTotal}</text>
             </g>
             <g id="easy-solved"><text id="easy-solved-type">Easy</text>
-                <text id="easy-solved-count">${data.Easy} / ${data.easyProblemsTotal}</text>
+                <text id="easy-solved-count">${data.Easy || 0} / ${data.easyProblemsTotal}</text>
             </g>
             <g id="medium-solved"><text id="medium-solved-type">Medium</text>
-                <text id="medium-solved-count">${data.Medium} / ${data.mediumProblemsTotal}</text>
+                <text id="medium-solved-count">${data.Medium || 0} / ${data.mediumProblemsTotal}</text>
             </g>
             <g id="hard-solved"><text id="hard-solved-type">Hard
-                </text><text id="hard-solved-count">${data.Hard} / ${data.hardProblemsTotal}</text>
+                </text><text id="hard-solved-count">${data.Hard || 0} / ${data.hardProblemsTotal}</text>
             </g>
         </g>
         <g id="total-activity">
