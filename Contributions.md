@@ -12,7 +12,7 @@ Your contributions help improve and expand the project, making it more useful fo
 
 2. **Clone the Repository**  
    ```sh
-   git clone https://github.com/your-username/coding-cards.git
+   git clone https://github.com/your-username/CodingCards.git
    cd coding-cards
    ```
 
@@ -22,10 +22,11 @@ Your contributions help improve and expand the project, making it more useful fo
    ```
 
 4. **Make Your Changes**  
-   - Fix bugs  
-   - Add new features  
-   - Improve documentation  
-   - Optimize performance  
+   You can contribute in several ways:  
+   - **Improve Responsiveness**: Enhance the UI to ensure better display on all screen sizes.  
+   - **Generate SVGs for CodeChef & Codeforces**: The data fetching is complete—help design and generate SVG profile cards similar to LeetCode & GFG.  
+   - **Improve Documentation**: Clarify existing docs, fix typos, or add missing details.  
+   - **Enhance Code Quality**: Refactor code, optimize performance, or fix bugs.  
 
 5. **Commit Your Changes**  
    ```sh
