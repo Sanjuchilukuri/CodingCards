@@ -70,7 +70,7 @@ app.get('/api/gfg-stats', async (req, res) => {
     };
 
     try {
-        const problemStats = extractProblemStats($(problemNavbar[0]).text());
+        const problemStats = extractProblemStats(response(problemNavbar[0]).text());
         Object.assign(values, problemStats);
     } catch (error) {
         return res.status(500).json({ error: "Failed to extract problem statistics!" });

@@ -65,3 +65,7 @@
         transform: scale(.9);
     }
 }
+
+.extra-small-text{
+    font-size: 10px;
+}

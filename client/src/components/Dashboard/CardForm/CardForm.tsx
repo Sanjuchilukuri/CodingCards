@@ -17,6 +17,8 @@ function CardForm() {
   const [isLoading, SetLoading] = useState(false);
   const [image, setImage] = useState("");
   const [rawData,setRawData] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
 
   const handleInputChange = (key: keyof IFormData, e:Event) => {    
     let value ;
@@ -30,61 +32,114 @@ function CardForm() {
     SetFormData({...formData, [key]:value});
   }
 
-  const handleSubmit =  async (e:Event) => {
-    e.preventDefault();
-    SetLoading(true);
-    if(isValidData(formData))
-    {
-        switch(formData.platform)
-        {
-            case "GeekForGeeks":
-                switch(formData.action)
-                {
-                    case "profileCard":
-                        let response = await get(apiUrls.GFG, { action: formData.action, theme: formData.theme, userName: formData.userName });
-                        const blob = new Blob([response], {type: 'image/svg+xml'});
-                        const url = URL.createObjectURL(blob);
-                        setRawData("");
-                        setImage(url);
-                        break;
-                    case "rawData":
-                        let responseRawData = await get(apiUrls.GFG, { action: formData.action, theme: formData.theme, userName: formData.userName });
-                        setImage("");
-                        setRawData(JSON.stringify(responseRawData, null, 4));
-                        break;
-                    case "Markdown":
-                        break;
-                }
-                break;
-            case "LeetCode":
-                switch(formData.action)
-                {
-                    case "profileCard":
-                        let response = await get(apiUrls.LeetCode, { action: formData.action, theme: formData.theme, userName: formData.userName });
-                        const blob = new Blob([response], {type: 'image/svg+xml'});
-                        const url = URL.createObjectURL(blob);
-                        setRawData("");
-                        setImage(url);
-                        break;
-                    case "rawData":
-                        let responseRawData = await get(apiUrls.LeetCode, { action: formData.action, theme: formData.theme, userName: formData.userName });
-                        setImage("");
-                        setRawData(JSON.stringify(responseRawData, null, 4));  
-                        break;
-                    case "Markdown":
-                        break;
-                }
-                break;  
+//   const handleSubmit =  async (e:Event) => {
+//     e.preventDefault();
+//     SetLoading(true);
+//     if(isValidData(formData))
+//     {
+//         try
+//         {
+//               switch(formData.platform)
+//                 {
+//                     case "GeekForGeeks":
+//                         switch(formData.action)
+//                         {
+//                             case "profileCard":
+//                                 let response = await get(apiUrls.GFG, { action: formData.action, theme: formData.theme, userName: formData.userName });
+//                                 const blob = new Blob([response], {type: 'image/svg+xml'});
+//                                 const url = URL.createObjectURL(blob);
+//                                 setRawData("");
+//                                 setImage(url);
+//                                 break;
+//                             case "rawData":
+//                                 let responseRawData = await get(apiUrls.GFG, { action: formData.action, theme: formData.theme, userName: formData.userName });
+//                                 setImage("");
+//                                 setRawData(JSON.stringify(responseRawData, null, 4));
+//                                 break;
+//                             case "Markdown":
+//                                 break;
+//                         }
+//                         break;
+//                     case "LeetCode":
+//                         switch(formData.action)
+//                         {
+//                             case "profileCard":
+//                                 let response = await get(apiUrls.LeetCode, { action: formData.action, theme: formData.theme, userName: formData.userName });
+//                                 const blob = new Blob([response], {type: 'image/svg+xml'});
+//                                 const url = URL.createObjectURL(blob);
+//                                 setRawData("");
+//                                 setImage(url);
+//                                 break;
+//                             case "rawData":
+//                                 let responseRawData = await get(apiUrls.LeetCode, { action: formData.action, theme: formData.theme, userName: formData.userName });
+//                                 setImage("");
+//                                 setRawData(JSON.stringify(responseRawData, null, 4));  
+//                                 break;
+//                             case "Markdown":
+//                                 break;
+//                         }
+//                         break;  
+//                 }
+//         }
+//         catch(error)
+//         {
+
+//         }
+//     }
+//     SetLoading(false);       
+//   }
+
+
+    const handleSubmit = async (e: Event) => {
+        e.preventDefault();
+        SetLoading(true);
+        setErrorMessage(""); // Reset error state
+
+        if (!formData.platform || !formData.userName) {
+            setErrorMessage("Platform and username are required.");
+            SetLoading(false);
+            return;
         }
-    }
-    SetLoading(false);       
-  }
 
+        try {
+            let response;
+            switch (formData.platform) {
+                case "GeekForGeeks":
+                    response = await get(apiUrls.GFG, {
+                        action: formData.action,
+                        theme: formData.theme,
+                        userName: formData.userName,
+                    });
+                    break;
+                case "LeetCode":
+                    response = await get(apiUrls.LeetCode, {
+                        action: formData.action,
+                        theme: formData.theme,
+                        userName: formData.userName,
+                    });
+                    break;
+                default:
+                    setErrorMessage("Invalid platform selected.");
+                    SetLoading(false);
+                    return;
+            }
 
-  const isValidData = (formData:IFormData) => {
-    console.log(formData);
-    return true;
-  }
+            if (formData.action === "profileCard") {
+                const blob = new Blob([response], { type: "image/svg+xml" });
+                setImage(URL.createObjectURL(blob));
+                setRawData("");
+            } else if (formData.action === "rawData") {
+                setRawData(JSON.stringify(response, null, 4));
+                setImage("");
+            }
+
+        } catch (error) {
+            console.error("API Error:", error);
+            setErrorMessage("Failed to fetch data. Please try again.");
+        } finally {
+            SetLoading(false);
+        }
+    };
 
   async function copyImg() {
     const permission = await navigator.permissions.query({ name: "clipboard-write" as PermissionName });
@@ -108,8 +163,9 @@ function CardForm() {
         <div className='w-50 d-flex justify-content-center align-items-center '>
             <form style={{width:"65%"}} className='border d-flex flex-column gap-3 shadow rounded-3 pb-3'>
 
-                <div className='border-bottom py-2'>
-                    <p className='fw-bold px-3' style={{fontSize:"20px"}}>Card Generator</p>
+                <div className='border-bottom py-2 d-flex gap-1 align-items-center'>
+                    <p className='fw-bold ps-3' style={{fontSize:"20px"}}>Card Generator</p>
+                    {errorMessage && <p className="text-danger mt-1 extra-small-text fw-bold">{errorMessage}</p>}
                 </div>
 
                 <div className='px-3 d-flex flex-column gap-3'>
