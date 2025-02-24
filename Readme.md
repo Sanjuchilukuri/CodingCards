@@ -42,6 +42,15 @@ To embed your profile card in a README or blog:
 ```
 [![Coding Profile](https://coding-cards.vercel.app/api/leetcode-stats?action=profileCard&theme=dark&userName=sanju_chilukuri)](https://www.codingcards.sanjuchilukuri.me/)
 ```
+<p >
+  <a href="https://www.geeksforgeeks.org/user/sanju_chilukuri">
+    <img src="https://coding-cards.vercel.app/api/gfg-stats?action=profileCard&theme=dark&userName=sanju_chilukuri" width="350">
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://leetcode.com/sanju1819/">
+    <img src="https://coding-cards.vercel.app/api/leetcode-stats?action=profileCard&theme=dark&userName=sanju1819" width="350">
+  </a>
+</p>
 
 ---
 
