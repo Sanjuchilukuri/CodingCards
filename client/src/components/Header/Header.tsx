@@ -6,12 +6,12 @@ function Header() {
     <div className="w-100 px-3 d-flex justify-content-between py-1 border-bottom align-items-center">
       <div className="d-flex fs-40 app-logo"><FaCode /></div>
       <div className="d-flex fw-medium gap-4 fs-5">
-        <p className="cursor-pointer">Docs</p>
-        <p className="cursor-pointer">Contribute</p>
+        <p className="cursor-pointer" onClick={() => window.location.href = "https://github.com/Sanjuchilukuri/CodingCards/blob/main/Readme.md"}>Docs</p>
+        <p className="cursor-pointer" onClick={() => window.location.href = "https://github.com/Sanjuchilukuri/CodingCards/blob/main/Contributions.md"}>Contribute</p>
         <span className="fs-5 cursor-pointer"><BsFillMoonStarsFill /></span>
       </div>
     </div>
   )
 }
 
-export default Header
+export default Header;
