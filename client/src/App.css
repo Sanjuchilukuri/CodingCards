@@ -1,71 +1,103 @@
 *{
-    box-sizing: border-box;
+    box-sizing: border-box ;
     padding: 0 !important;
     margin: 0 !important;
     overscroll-behavior: none !important;
     scrollbar-width: thin;
 }
 
-:root{
-    --bs-border-width:1.5px !important;
-    --bs-border-color:#ccc !important;
-    --white:#fff;
-    --black:#000;
-    --light-blue:#E6F5FC;
-    /* --blue:#57ABD0; */
-    --blue:#1090cb;
+:root {
+    --border-width: 1.5px !important;
+    --border-color: #ccc !important;
+    
+    --text-light: #fff;
+    --text-dark: black;
+
+    --primary-color: #1090cb;
+    --secondary-color:#E6F5FC;
+    --bg-faded: #f5f5ff;
+    /* --bg-light:#fff;  */
 }
 
-.light{
-    color: var(--black) !important;
+
+
+.light {
+    color: var(--text-dark) !important;
 }
 
-.dark{
-    color: var(--white) !important;
+[data-theme="dark"] {
+    --text-light: #000 !important;
+    --text-dark: #fff !important;
+
+    --primary-color: #57ABD0 !important;
+    --secondary-color:#000 !important;
+    --bg-faded: #2b2b2b !important;
+    --bg-light:#000 !important;
 }
 
-.fs-40{
-    font-size: 40px ;
+.text-primary{
+    color: var(--text-light) !important;
 }
 
-.fs-16{
+.text-secondary{
+    color: var(--text-dark) !important;
+}
+
+
+.dark {
+    color: var(--text-light) !important;
+}
+
+.fs-40 {
+    font-size: 40px;
+}
+
+.fs-16 {
     font-size: 16px !important;
 }
 
-.cursor-pointer{
+.cursor-pointer {
     cursor: pointer;
 }
 
-.bg-light-blue{
-    background-color: var(--light-blue) !important;
+.bg-light-blue {
+    background-color: var(--secondary-color) !important;
 }
 
-.bg-blue{
-    background-color: var(--blue) !important;
+.bg-blue {
+    background-color: var(--primary-color) !important;
 }
 
-.text-blue{
-    color: var(--blue) !important;
+.text-blue {
+    color: var(--primary-color) !important;
 }
 
-.text-justify{
+.text-justify {
     text-align: justify !important;
 }
 
-.word-spacing-1{
+.word-spacing-1 {
     word-spacing: 2px !important;
 }
 
-.outline-0{
+.outline-0 {
     outline: none !important;
 }
 
-.click-action{
-    &:active{
-        transform: scale(.9);
+.click-action {
+    &:active {
+        transform: scale(0.9);
     }
 }
 
-.extra-small-text{
+.extra-small-text {
     font-size: 10px;
+}
+
+.bg-rawdata {
+    background-color: var(--bg-faded);
+}
+
+.bg-white{
+    background-color: var(--bg-light) !important;
 }

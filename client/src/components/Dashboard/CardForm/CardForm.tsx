@@ -131,40 +131,40 @@ function CardForm() {
             <form style={{width:"65%"}} className='border d-flex flex-column gap-3 shadow rounded-3 pb-3'>
 
                 <div className='border-bottom py-2 d-flex gap-1 align-items-center'>
-                    <p className='fw-bold ps-3' style={{fontSize:"20px"}}>Card Generator</p>
+                    <p className='fw-bold ps-3 text-secondary' style={{fontSize:"20px"}}>Card Generator</p>
                     {errorMessage && <p className="text-danger mt-1 extra-small-text fw-bold">{errorMessage}</p>}
                 </div>
 
                 <div className='px-3 d-flex flex-column gap-3'>
                     <div className='d-flex flex-column'>
-                        <label>Platform <span className="fw-bold text-danger">*</span></label>
-                        <select name="platform" id="platform" className='outline-0 cursor-pointer p-1 border-0 bg-transparent border-bottom rounded-2' onChange={(e:any) => handleInputChange('platform',e)}>
-                            <option value="" hidden defaultChecked>Select Platform</option>
-                            <option value="GeekForGeeks">Geek For Geeks</option>
-                            <option value="LeetCode">LeetCode</option>
+                        <label className="text-secondary">Platform <span className="fw-bold text-danger">*</span></label>
+                        <select name="platform" id="platform" className='outline-0 bg-white text-secondary cursor-pointer p-1 border-0 bg-transparent border-bottom rounded-2' onChange={(e:any) => handleInputChange('platform',e)}>
+                            <option className="text-secondary" value="" hidden defaultChecked>Select Platform</option>
+                            <option className="text-secondary" value="GeekForGeeks">Geek For Geeks</option>
+                            <option className="text-secondary" value="LeetCode">LeetCode</option>
                             {/* <option value="CodeChef">CodeChef</option> */}
                             {/* <option value="CodeForces">CodeForces</option> */}
                         </select>
                     </div>
 
                     <div className='d-flex flex-column'>
-                        <label htmlFor="userName">username <span className="fw-bold text-danger">*</span></label>
-                        <input type="text" name="userName" id="userName" className='outline-0 p-1 border-0 bg-transparent border-bottom rounded-2' placeholder='Enter your username' onChange={(e:any) => handleInputChange("userName",e)}/>
+                        <label className="text-secondary" htmlFor="userName">username <span className="fw-bold text-danger">*</span></label>
+                        <input type="text" name="userName" id="userName" className='text-secondary bg-white outline-0 p-1 border-0 bg-transparent border-bottom rounded-2' placeholder='Enter your username' onChange={(e:any) => handleInputChange("userName",e)}/>
                     </div>
 
 
                     <div className='d-flex flex-column'>
-                        <label htmlFor="theme">Theme</label>
-                        <select name="theme" id="theme" className='outline-0 border-0 bg-transparent border-bottom rounded-2 cursor-pointer' onChange={(e:any) => handleInputChange('theme',e)}>
-                            <option value="dark">Dark</option>
-                            <option value="light">Light</option>
+                        <label className="text-secondary" htmlFor="theme">Theme</label>
+                        <select name="theme" id="theme" className='outline-0 bg-white text-secondary border-0 bg-transparent border-bottom rounded-2 cursor-pointer' onChange={(e:any) => handleInputChange('theme',e)}>
+                            <option className="text-secondary" value="dark">Dark</option>
+                            <option className="text-secondary" value="light">Light</option>
                         </select>
                     </div>
 
                    <div className="d-flex border rounded-2 w-100">
-                        <div style={{width:"34%"}} className={`px-3 py-1 rounded-2 cursor-pointer text-center fw-bold ${formData.action == "profileCard" ? 'bg-blue text-white' : 'bg-white text-black'}`} onClick={(e:any) => {handleInputChange("action",e)}} id="profileCard">Profile Card</div>
-                        <div style={{width:"33%"}} className={`px-3 py-1 rounded-2 cursor-pointer text-center fw-bold ${formData.action == "rawData" ? 'bg-blue text-white' : 'bg-white text-black'}`} onClick={(e:any) => {handleInputChange("action",e)}} id="rawData">Raw Data</div>
-                        <div style={{width:"33%"}} className={`px-3 py-1 rounded-2 cursor-pointer text-center fw-bold ${formData.action == "Markdown" ? 'bg-blue text-white' : 'bg-white text-black'}`} onClick={(e:any) => {handleInputChange("action",e)}} id="Markdown">Markdown</div>
+                        <div style={{width:"34%"}} className={`px-3 py-1 rounded-2 cursor-pointer text-center fw-bold ${formData.action == "profileCard" ? 'bg-blue text-primary' : 'bg-white text-secondary'}`} onClick={(e:any) => {handleInputChange("action",e)}} id="profileCard">Profile Card</div>
+                        <div style={{width:"33%"}} className={`px-3 py-1 rounded-2 cursor-pointer text-center fw-bold ${formData.action == "rawData" ? 'bg-blue text-primary' : 'bg-white text-secondary'}`} onClick={(e:any) => {handleInputChange("action",e)}} id="rawData">Raw Data</div>
+                        <div style={{width:"33%"}} className={`px-3 py-1 rounded-2 cursor-pointer text-center fw-bold ${formData.action == "Markdown" ? 'bg-blue text-primary' : 'bg-white text-secondary'}`} onClick={(e:any) => {handleInputChange("action",e)}} id="Markdown">Markdown</div>
                     </div>
 
                     {image &&
@@ -179,7 +179,7 @@ function CardForm() {
                     }
                     { rawData &&
                         <div className="d-flex gap-2 w-100">
-                            <pre style={{height:"200px", overflow:"scroll", backgroundColor:"#f5f5ff", width:"90%"}} className="border ">
+                            <pre style={{height:"200px", overflow:"scroll", width:"90%"}} className="border bg-rawdata text-secondary">
                                 {rawData}
                             </pre>
                             <div className='d-flex flex-column gap-3 justify-content-end pb-2'>
@@ -191,7 +191,7 @@ function CardForm() {
                     }
                     { markdownText &&
                         <div className="d-flex gap-2">
-                            <pre style={{height:"50px", overflow:"scroll", backgroundColor:"#f5f5ff", width:"90%"}} className="border ">
+                            <pre style={{height:"50px", overflow:"scroll", width:"90%"}} className="border bg-rawdata text-secondary">
                                 {markdownText}
                             </pre>
                              <div className='d-flex flex-column gap-3 justify-content-end pb-2'>
