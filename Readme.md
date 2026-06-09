@@ -6,7 +6,9 @@ Showcase your coding journey with **CODING CARDS**! Effortlessly generate a pers
 
 ## 🚀 How to Use
 
-Go to **[CODING CARDS](https://www.codingcards.sanjuchilukuri.me/)**  
+Go to **[CODING CARDS](https://coding-cardsin.vercel.app/)**
+
+Go to **[CODING CARDS API](https://coding-cards.vercel.app/)**
 
 1. **Select a Platform**  
    Choose either **LeetCode** or **GeeksforGeeks** from the platform dropdown.
